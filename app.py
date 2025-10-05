@@ -83,8 +83,11 @@ def dashboard():
         current_user=current_user
     )
 
-@app.route('/trim', methods=['POST'])
+@app.route('/trim', methods=['GET','POST'])
 def trim():
+    if request.method == 'GET':
+        return redirect(url_for('dashboard'))
+
     url_path = request.form['path']
     filename = os.path.basename(url_path)
     real_path = os.path.join("static", "uploads", secure_filename(filename))
@@ -95,8 +98,10 @@ def trim():
     output = trim_video(real_path, start, end)
     return send_file(output)
 
-@app.route('/voice', methods=['POST'])
+@app.route('/voice', methods=['GET','POST'])
 def voice():
+    if request.method == 'GET':
+        return redirect(url_for('dashboard'))
     text = request.form['text']
     tts = gTTS(text=text, lang='en')
     output_path = "static/previews/voice.mp3"
