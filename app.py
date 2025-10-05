@@ -58,6 +58,7 @@ def dashboard():
 
     if request.method == "POST" and "video" in request.files:
         video = request.files["video"]
+        os.makedirs("static/uploads", exist_ok=True)
         upload_path = os.path.join("static", "uploads", secure_filename(video.filename))
         video.save(upload_path)
         video_path = "/" + upload_path.replace("\\", "/")
@@ -99,6 +100,7 @@ def voice():
     text = request.form['text']
     tts = gTTS(text=text, lang='en')
     output_path = "static/previews/voice.mp3"
+    os.makedirs("static/previews", exist_ok=True)
     tts.save(output_path)
 
     trimmed_exists = os.path.exists("static/previews/trimmed.mp4")
@@ -121,7 +123,7 @@ def voice():
 def chat():
     prompt = request.form["prompt"]
     video_path = "static/uploads/videoplayback.mp4"
-
+    os.makedirs("static/previews", exist_ok=True)
     trimmed_exists = False
     voice_exists = os.path.exists("static/previews/voice.mp3")
     captioned_exists = False
