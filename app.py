@@ -176,6 +176,33 @@ def voice():
         )
     except Exception as e:
         return render_template("dashboard.html", response=f"Voiceover failed: {str(e)}")
+@app.route('/music', methods=['GET','POST'])
+def music():
+    if request.method == 'GET':
+        return redirect(url_for('dashboard'))
+    try:
+        music_file = request.files['music']
+        music_path = os.path.join("static", "audio", secure_filename(music_file.filename))
+        os.makedirs("static/audio", exist_ok=True)
+        music_file.save(music_path)
+
+        video_path = "static/uploads/videoplayback.mp4"
+        add_background_music(video_path, music_path)
+
+        return render_template("dashboard.html",
+            video_path="/" + video_path,
+            trimmed_exists=os.path.exists("static/previews/trimmed.mp4"),
+            voice_exists=os.path.exists("static/previews/voice.mp3"),
+            captioned_exists=os.path.exists("static/previews/captioned.mp4"),
+            split_exists=os.path.exists("static/previews/split_part1.mp4") and os.path.exists("static/previews/split_part2.mp4"),
+            muted_exists=os.path.exists("static/previews/muted.mp4"),
+            music_exists=True,
+            response="Background music added successfully!",
+            history=[],
+            current_user=current_user
+        )
+    except Exception as e:
+        return render_template("dashboard.html", response=f"Music upload failed: {str(e)}")   
 
 @app.route("/chat", methods=["POST"])
 def chat():

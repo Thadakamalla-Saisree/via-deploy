@@ -92,6 +92,13 @@
             <textarea name="text" placeholder="Enter narration text..." rows="4" required></textarea>
             <button type="submit">Generate Voice</button>
         </form>
+        <!-- 🎵 Upload and Add Background Music -->
+        <h2>🎶 Add Background Music</h2>
+        <form action="/music" method="POST" enctype="multipart/form-data" onsubmit="showSpinner()">
+            <label for="music">Upload .mp3 file:</label>
+            <input type="file" name="music" accept=".mp3" required>
+            <button type="submit">Add Music</button>
+        </form>
 
         <!-- Spinner -->
         <div class="spinner" id="loadingSpinner"></div>
