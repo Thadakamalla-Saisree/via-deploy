@@ -11,18 +11,22 @@ def trim_video(path, start, end):
     clip = VideoFileClip(path).subclip(start, end)
     output = "static/previews/trimmed.mp4"
     os.makedirs("static/previews", exist_ok=True)
-    clip.write_videofile(output)
+    clip.write_videofile(output, codec="libx264", audio_codec="aac")
+    clip.close()
     return output
 
 def split_video(path, time):
     clip = VideoFileClip(path)
     part1 = clip.subclip(0, time)
-    part2 = clip.subclip(time)
+    part2 = clip.subclip(time, clip.duration)
     os.makedirs("static/previews", exist_ok=True)
     out1 = "static/previews/split_part1.mp4"
     out2 = "static/previews/split_part2.mp4"
-    part1.write_videofile(out1)
-    part2.write_videofile(out2)
+    part1.write_videofile(out1, codec="libx264", audio_codec="aac")
+    part2.write_videofile(out2, codec="libx264", audio_codec="aac")
+    clip.close()
+    part1.close()
+    part2.close()
     return [out1, out2]
 
 def add_captions(path, text):
@@ -31,21 +35,28 @@ def add_captions(path, text):
     final = CompositeVideoClip([clip, txt])
     os.makedirs("static/previews", exist_ok=True)
     output = "static/previews/captioned.mp4"
-    final.write_videofile(output)
+    final.write_videofile(output, codec="libx264", audio_codec="aac")
+    clip.close()
+    txt.close()
+    final.close()
     return output
 
 def mute_audio(path):
     clip = VideoFileClip(path).without_audio()
     os.makedirs("static/previews", exist_ok=True)
     output = "static/previews/muted.mp4"
-    clip.write_videofile(output)
+    clip.write_videofile(output, codec="libx264", audio_codec="aac")
+    clip.close()
     return output
 
 def add_background_music(video_path, music_path):
     video = VideoFileClip(video_path)
-    audio = AudioFileClip(music_path).set_duration(video.duration)
+    audio = AudioFileClip(music_path).subclip(0, video.duration)
     final = video.set_audio(audio)
     os.makedirs("static/previews", exist_ok=True)
     output = "static/previews/music_added.mp4"
-    final.write_videofile(output)
+    final.write_videofile(output, codec="libx264", audio_codec="aac")
+    video.close()
+    audio.close()
+    final.close()
     return output
